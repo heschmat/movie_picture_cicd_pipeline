@@ -3,6 +3,12 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import axios from 'axios';
 import MovieList from '../MovieList';
 
+beforeAll(() => {
+  window._env_ = {
+    REACT_APP_MOVIE_API_URL: 'http://localhost:4000',
+  };
+});
+
 jest.mock('axios');
 
 const mockMovies = [
