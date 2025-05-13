@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    app: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: heschmat/movies-fe:v1
+          ports:
+            - containerPort: 3000
+          env:
+          - name: REACT_APP_MOVIE_API_URL
+            #value: "http://backend:80"   # Replace 'backend' with actual service name if different
+            #value: "http://k8s-default-moviesin-18797f7e34-874632922.us-east-1.elb.amazonaws.com/movies"  # Use the backend ALB URL here
+            value: ""

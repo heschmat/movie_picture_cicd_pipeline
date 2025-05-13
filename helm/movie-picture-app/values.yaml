@@ -1,0 +1,24 @@
+frontend:
+  name: frontend
+  image: heschmat/movies-fe:v1
+  containerPort: 3000
+  servicePort: 80
+  env:
+    REACT_APP_MOVIE_API_URL: ""
+
+backend:
+  name: backend
+  image: heschmat/movies-be:v2
+  containerPort: 5000
+  servicePort: 80
+  readinessPath: /movies
+  livenessPath: /movies
+
+ingress:
+  enabled: true
+  name: movies-ingress
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/healthcheck-port: traffic-port
+  ingressClassName: alb
