@@ -1,0 +1,88 @@
+name: CI for Frontend and Backend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'code/frontend/**'
+      - 'code/backend/**'
+      - '.github/workflows/ci.yml'
+
+jobs:
+  ci-cd:
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_USER: ${{ vars.DH_USER }}
+      DOCKER_PASS: ${{ secrets.DH_TOKEN }}
+      IMAGE_TAG: ${{ github.sha }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      ### FRONTEND TESTS & LINTING ###
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install frontend dependencies
+        working-directory: ./code/frontend
+        run: npm ci
+
+      - name: Lint frontend
+        working-directory: ./code/frontend
+        run: npm run lint
+
+      - name: Test frontend
+        working-directory: ./code/frontend
+        run: npm test -- --watchAll=false
+
+      ### BACKEND TESTS & LINTING ###
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install pipenv
+        run: pip install pipenv
+
+      - name: Install backend dependencies with pipenv
+        working-directory: ./code/backend
+        run: pipenv install --dev
+
+      - name: Lint backend
+        working-directory: ./code/backend
+        run: pipenv run lint
+
+      - name: Test backend
+        working-directory: ./code/backend
+        run: pipenv run test
+
+      ### BUILD & PUSH IMAGES ###
+      - name: Log in to Docker Hub
+        run: echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
+
+      - name: Build and push frontend image
+        run: |
+          docker build -t ${DOCKER_USER}/movies-fe:${IMAGE_TAG} ./code/frontend
+          docker push ${DOCKER_USER}/movies-fe:${IMAGE_TAG}
+
+      - name: Build and push backend image
+        run: |
+          docker build -t ${DOCKER_USER}/movies-be:${IMAGE_TAG} ./code/backend
+          docker push ${DOCKER_USER}/movies-be:${IMAGE_TAG}
+
+      - name: Update image tags in Helm values.yaml
+        run: |
+          sudo snap install yq
+          yq e -i '.frontend.image.tag = env(IMAGE_TAG)' helm/movie-picture-app/values.yaml
+          yq e -i '.backend.image.tag = env(IMAGE_TAG)' helm/movie-picture-app/values.yaml
+
+      - name: Commit and push updated image tags
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add .
+          git diff --quiet && echo "No changes to commit" || git commit -m "Update image tags to ${IMAGE_TAG}" && git push
