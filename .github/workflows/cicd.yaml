@@ -86,20 +86,11 @@ jobs:
           docker build -t ${DOCKER_USER}/movies-be:${IMAGE_TAG} ./code/backend
           docker push ${DOCKER_USER}/movies-be:${IMAGE_TAG}
 
-      # - name: Update image tags in Helm values.yaml
-      #   run: |
-      #     sudo snap install yq
-      #     yq e -i '.frontend.image.tag = env(IMAGE_TAG)' helm/movie-picture-app/values.yaml
-      #     yq e -i '.backend.image.tag = env(IMAGE_TAG)' helm/movie-picture-app/values.yaml
-
       - name: Update image tags in Helm values.yaml
         run: |
-          # Replace frontend image tag
-          sed -i "s/\(frontend.*tag: \).*/\1\"${IMAGE_TAG}\"/" helm/movie-picture-app/values.yaml
-
-          # Replace backend image tag
-          sed -i "s/\(backend.*tag: \).*/\1\"${IMAGE_TAG}\"/" helm/movie-picture-app/values.yaml
-
+          # Replace frontend & backend image tag
+          sed -i "s/^\(\s*tag:\s*\).*/\1\"${IMAGE_TAG}\"/" helm/movie-picture-app/values.yaml
+          sed -i "0,/^\(\s*tag:\s*\).*/s//\1\"${IMAGE_TAG}\"/" helm/movie-picture-app/values.yaml
 
       - name: Commit and push updated image tags
         env:
