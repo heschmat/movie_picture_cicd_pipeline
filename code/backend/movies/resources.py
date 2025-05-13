@@ -8,6 +8,7 @@ movies = {
     "789": {"title": "The Big Sick", "description": "Romantic comedy based on true story"},
     "321": {"title": "The Intouchables", "description": "Unlikely friendship and caregiving"},
     "654": {"title": "War Dogs", "description": "Arms dealing and business gone wild"},
+    "741": {"title": "Whiplash", "description": "Intense music mentorship and obsession with greatness"},
 }
 
 
