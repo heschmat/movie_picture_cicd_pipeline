@@ -94,7 +94,8 @@ jobs:
           # Replace backend image tag
           sed -i "/backend:/,/tag:/s/^\(\s*tag:\s*\).*/\1\"${IMAGE_TAG}\"/" helm/movie-picture-app/values.yaml
 
-          echo "Updated values.yaml"
+          echo "Updated values.yaml:"
+          cat helm/movie-picture-app/values.yaml
 
       - name: Commit and push updated image tags
         env:
