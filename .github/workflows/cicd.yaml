@@ -6,7 +6,7 @@ on:
     paths:
       - 'code/frontend/**'
       - 'code/backend/**'
-      - '.github/workflows/ci.yml'
+      - '.github/workflows/cicd.yml'
 
 jobs:
   ci-cd:

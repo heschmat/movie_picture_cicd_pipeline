@@ -1,7 +1,7 @@
 frontend:
   name: frontend
   image:
-    repository: reheschmat/movies-fe
+    repository: heschmat/movies-fe
     tag: v1
   containerPort: 3000
   servicePort: 80
@@ -11,7 +11,7 @@ frontend:
 backend:
   name: backend
   image:
-    repository: reheschmat/movies-be
+    repository: heschmat/movies-be
     tag: v2
   containerPort: 5000
   servicePort: 80
