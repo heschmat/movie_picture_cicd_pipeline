@@ -2,7 +2,7 @@ frontend:
   name: frontend
   image:
     repository: heschmat/movies-fe
-    tag: "47e20d865fe5e00cc302feba5763683c91273612"
+    tag: "60c0504a81d808d8aa968b89720209cd42e6be7b"
   containerPort: 3000
   servicePort: 80
   env:
@@ -12,7 +12,7 @@ backend:
   name: backend
   image:
     repository: heschmat/movies-be
-    tag: "47e20d865fe5e00cc302feba5763683c91273612"
+    tag: "60c0504a81d808d8aa968b89720209cd42e6be7b"
   containerPort: 5000
   servicePort: 80
   readinessPath: /movies
