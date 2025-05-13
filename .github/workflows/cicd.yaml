@@ -88,9 +88,13 @@ jobs:
 
       - name: Update image tags in Helm values.yaml
         run: |
-          # Replace frontend & backend image tag
-          sed -i "s/^\(\s*tag:\s*\).*/\1\"${IMAGE_TAG}\"/" helm/movie-picture-app/values.yaml
-          sed -i "0,/^\(\s*tag:\s*\).*/s//\1\"${IMAGE_TAG}\"/" helm/movie-picture-app/values.yaml
+          # Replace frontend image tag
+          sed -i "/frontend:/,/tag:/s/^\(\s*tag:\s*\).*/\1\"${IMAGE_TAG}\"/" helm/movie-picture-app/values.yaml
+
+          # Replace backend image tag
+          sed -i "/backend:/,/tag:/s/^\(\s*tag:\s*\).*/\1\"${IMAGE_TAG}\"/" helm/movie-picture-app/values.yaml
+
+          echo "Updated values.yaml"
 
       - name: Commit and push updated image tags
         env:
@@ -101,3 +105,4 @@ jobs:
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}
           git add .
           git diff --quiet && echo "No changes to commit" || git commit -m "Update image tags to ${IMAGE_TAG}" && git push
+
