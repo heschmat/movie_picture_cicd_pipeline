@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: movies-be
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: movies-fe
+    ports:
+      - "3000:80"  # Expose nginx port 80 as 3000 externally
+    restart: unless-stopped
+    environment:
+      - REACT_APP_MOVIE_API_URL=http://54.236.4.223:5000  # Set the environment variable at runtime
